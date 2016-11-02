@@ -99,6 +99,18 @@ public class Seed {
     }
 
     /**
+     * Recupera {@code long} depositado no buffer na posição indicada.
+     *
+     * @param buffer Vetor do qual o {@code long} será recuperado.
+     * @param offset Posição inicial do valor a ser recuperado.
+     * @return Valor recuperado do buffer na posição indicada.
+     */
+    public long unpackLong(byte[] buffer, int offset) {
+        ByteBuffer wrapped = ByteBuffer.wrap(buffer);
+        return wrapped.getLong(offset);
+    }
+
+    /**
      * Empacota um {@code float} em vetor de bytes.
      *
      * @param valor Valor a ser empacotado.
@@ -109,6 +121,18 @@ public class Seed {
         ByteBuffer buffer = ByteBuffer.allocate(4);
         buffer.putFloat(valor);
         return buffer.array();
+    }
+
+    /**
+     * Recupera {@code float} depositado no buffer na posição indicada.
+     *
+     * @param buffer Vetor do qual o {@code float} será recuperado.
+     * @param offset Posição inicial do valor a ser recuperado.
+     * @return Valor recuperado do buffer na posição indicada.
+     */
+    public float unpackFloat(byte[] buffer, int offset) {
+        ByteBuffer wrapped = ByteBuffer.wrap(buffer);
+        return wrapped.getFloat(offset);
     }
 
     /**
@@ -125,6 +149,18 @@ public class Seed {
     }
 
     /**
+     * Recupera {@code double} depositado no buffer na posição indicada.
+     *
+     * @param buffer Vetor do qual o {@code double} será recuperado.
+     * @param offset Posição inicial do valor a ser recuperado.
+     * @return Valor recuperado do buffer na posição indicada.
+     */
+    public double unpackDouble(byte[] buffer, int offset) {
+        ByteBuffer wrapped = ByteBuffer.wrap(buffer);
+        return wrapped.getDouble(offset);
+    }
+
+    /**
      * Empacota um {@code boolean} em vetor de bytes.
      *
      * @param valor Valor a ser empacotado.
@@ -138,6 +174,18 @@ public class Seed {
     }
 
     /**
+     * Recupera {@code boolean} depositado no buffer na posição indicada.
+     *
+     * @param buffer Vetor do qual o {@code boolean} será recuperado.
+     * @param offset Posição inicial do valor a ser recuperado.
+     * @return Valor recuperado do buffer na posição indicada.
+     */
+    public boolean unpackBoolean(byte[] buffer, int offset) {
+        ByteBuffer wrapped = ByteBuffer.wrap(buffer);
+        return wrapped.get(offset) == 1;
+    }
+
+    /**
      * Empacota um {@code char} em vetor de bytes.
      *
      * @param valor Valor a ser empacotado.
@@ -148,5 +196,17 @@ public class Seed {
         ByteBuffer buffer = ByteBuffer.allocate(2);
         buffer.putChar(valor);
         return buffer.array();
+    }
+
+    /**
+     * Recupera {@code char} depositado no buffer na posição indicada.
+     *
+     * @param buffer Vetor do qual o {@code char} será recuperado.
+     * @param offset Posição inicial do valor a ser recuperado.
+     * @return Valor recuperado do buffer na posição indicada.
+     */
+    public char unpackChar(byte[] buffer, int offset) {
+        ByteBuffer wrapped = ByteBuffer.wrap(buffer);
+        return wrapped.getChar(offset);
     }
 }
