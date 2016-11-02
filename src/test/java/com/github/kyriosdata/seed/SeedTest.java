@@ -8,8 +8,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class SeedTest {
 
     @Test
-    public void modelo() {
-        assertTrue(true);
+    public void tiposPrimitivos() {
+        assertEquals(true);
     }
 }
 
