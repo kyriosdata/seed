@@ -18,7 +18,7 @@ Serviços de serialização e desserialização de objetos.
 
 ## Como usar (via maven)?
 
-Acrescente a dependência abaixo no arquivo pom.xml:
+Acrescente a dependência no arquivo pom.xml:
 
 <pre>
 &lt;dependency&gt;
