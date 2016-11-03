@@ -1,6 +1,5 @@
 package com.github.kyriosdata.seed;
 
-
 import org.junit.jupiter.api.Test;
 
 import java.io.UnsupportedEncodingException;
