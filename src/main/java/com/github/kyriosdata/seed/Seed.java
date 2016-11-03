@@ -14,6 +14,69 @@ import java.nio.ByteBuffer;
  */
 public class Seed {
 
+    public final static byte BYTE = 0;
+    public final static byte SHORT = 1;
+    public final static byte INT = 2;
+    public final static byte LONG = 3;
+    public final static byte FLOAT = 4;
+    public final static byte DOUBLE = 5;
+    public final static byte BOOLEAN = 6;
+    public final static byte CHAR = 7;
+    public final static byte STRING = 8;
+    public final static byte VETOR = 9;
+
+    /**
+     * Tamanhos empregados para armazenar cada um dos
+     * tipos primitivos. Observe que o valor do tipo
+     * é o índice no vetor para o tamanho correspondente.
+     */
+    private int[] tamanho = new int[] { 1, 2, 4, 8, 4, 8, 1, 2, 0, 0 };
+
+    /**
+     * Marca início dos dados propriamente ditos, primeiro
+     * byte após metainformações.
+     */
+    private int offsetInicio;
+
+    /**
+     * Buffer no qual a serialização de um objeto
+     * será depositada.
+     */
+    private ByteBuffer buffer;
+
+
+    private Seed() {
+    }
+
+    /**
+     * Cria uma instância com a metainformação indicada.
+     *
+     * @param meta Metainformação associada ao objeto
+     *             a ser serializado. Primeiro byte indica
+     *             a quantidade membros e os seguintes,
+     *             os tipos de cada um deles, na ordem
+     *             em que devem ser armazenados.
+     */
+    public static Seed serializa(byte[] meta) {
+        Seed s = new Seed();
+        s.buffer = ByteBuffer.allocate(128);
+        s.buffer.put(meta);
+        s.offsetInicio = meta.length;
+
+        return s;
+    }
+
+    public static Seed desserializa(byte[] dados) {
+        Seed s = new Seed();
+        s.buffer = ByteBuffer.wrap(dados);
+
+        // Primeiro byte indica apenas quantidade de membros
+        // que segue essa quantidade, armazenada em um byte.
+        s.offsetInicio = s.buffer.get(0) + 1;
+
+        return s;
+    }
+
     /**
      * Empacota um byte.
      *
@@ -247,4 +310,64 @@ public class Seed {
 
         return new String(strBytes, "UTF-8");
     }
+
+    public byte[] array() {
+        byte[] bytesUsados = new byte[tamanhoObjeto()];
+
+        buffer.position(0);
+        buffer.get(bytesUsados);
+
+        return bytesUsados;
+    }
+
+    /**
+     * Identifica o tamanho em bytes do objeto
+     * serializado.
+     *
+     * @return Quantidade de bytes ocupada pelo objeto
+     * serializado.
+     */
+    public int tamanhoObjeto() {
+        int membros = buffer.get(0);
+        return offset(membros);
+    }
+
+    public void defineBoolean(int ordem, boolean valor) {
+        byte[] bytesValor = pack(valor);
+        buffer.position(offset(ordem));
+        buffer.put(bytesValor);
+    }
+
+    /**
+     * Recupera o membro {@code boolean}.
+     *
+     * @param ordem A ordem do membro a ser recuperado.
+     * @return Valor lógico armazenado no membro.
+     *
+     */
+    public boolean obtemBoolean(int ordem) {
+        return buffer.get(offset(ordem)) == 1;
+    }
+
+    /**
+     * Produz o deslocamento no vetor de bytes a partir
+     * do qual inicia-se o campo de ordem indicada.
+     *
+     * @param ordem Ordem do membro cujo início é desejado.
+     *              A primeira ordem é 0, a segunda 1 e
+     *              assim sucessivamente.
+     *
+     * @return Quantidade de bytes, a partir da qual se
+     * inicia o membro de ordem indicada.
+     */
+    public int offset(int ordem) {
+        int delta = offsetInicio;
+        for (int i = 1; i <= ordem; i++) {
+            int tipo = buffer.get(i);
+            delta = delta + tamanho[tipo];
+        }
+
+        return delta;
+    }
+
 }
