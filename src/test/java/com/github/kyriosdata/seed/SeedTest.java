@@ -37,7 +37,11 @@ public class SeedTest {
 
     @Test
     public void objetoComUmMembroPrimitivo() {
-        byte[] meta = new byte[] { 1, Seed.BOOLEAN };
+        // Primeiro byte não usado
+        // Segundo byte indica quantidade de campos do registro
+        // Terceiro byte indica tipo armazenado
+        byte[] meta = new byte[] { 0, 1, Seed.BOOLEAN };
+
         Seed s = Seed.serializa(meta);
         s.defineBoolean(0, true);
 
@@ -51,7 +55,11 @@ public class SeedTest {
 
     @Test
     public void objetoComDoisMembrosPrimitivos() {
-        byte[] meta = new byte[] { 2, Seed.BOOLEAN, Seed.BOOLEAN };
+        // Primeiro byte não usado
+        // Segundo byte a quantidade de campos
+        // Demais bytes, um para cada campo, o tipo correspondente.
+        byte[] meta = new byte[] { 0, 2, Seed.BOOLEAN, Seed.BOOLEAN };
+
         Seed s = Seed.serializa(meta);
 
         s.defineBoolean(0, true);
