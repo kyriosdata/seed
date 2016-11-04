@@ -56,6 +56,7 @@ public class Seed {
      *             a quantidade membros e os seguintes,
      *             os tipos de cada um deles, na ordem
      *             em que devem ser armazenados.
+     * @return Objeto apto a realizar operações de serialização.
      */
     public static Seed serializa(byte[] meta) {
         Seed s = new Seed();
@@ -280,6 +281,9 @@ public class Seed {
      * @param valor Valor a ser empacotado.
      *
      * @return Vetor de bytes contendo o valor empacotado.
+     *
+     * @throws UnsupportedEncodingException Caso o suporte para UTF-8
+     * não esteja disponível.
      */
     public byte[] pack(String valor) throws UnsupportedEncodingException {
         byte[] bytes = valor.getBytes("UTF-8");
@@ -298,6 +302,9 @@ public class Seed {
      * @param buffer Vetor do qual o {@code char} será recuperado.
      * @param offset Posição inicial do valor a ser recuperado.
      * @return Valor recuperado do buffer na posição indicada.
+     *
+     * @throws UnsupportedEncodingException Caso o suporte para UTF-8
+     * não esteja disponível.
      */
     public String unpackString(byte[] buffer, int offset) throws UnsupportedEncodingException {
         ByteBuffer wrapped = ByteBuffer.wrap(buffer);
