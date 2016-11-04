@@ -438,6 +438,29 @@ public class Seed {
     }
 
     /**
+     * Define o caractere para a ordem indicada.
+     *
+     * @param ordem A ordem do campo no registro.
+     * @param valor O valor a ser definido para o campo.
+     */
+    public void defineChar(int ordem, char valor) {
+        byte[] bytesValor = pack(valor);
+        buffer.position(offset(ordem));
+        buffer.put(bytesValor);
+    }
+
+    /**
+     * Recupera o caractere do registro.
+     *
+     * @param ordem A ordem do caractere no registro.
+     * @return Valor do caractere armazenado no registro.
+     *
+     */
+    public char obtemChar(int ordem) {
+        return buffer.getChar(offset(ordem));
+    }
+
+    /**
      * Produz o deslocamento em bytes a partir
      * do início do registro, no qual inicia-se o
      * campo de ordem indicada.

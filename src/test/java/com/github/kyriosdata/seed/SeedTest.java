@@ -73,5 +73,24 @@ public class SeedTest {
         assertTrue(s.obtemBoolean(0));
         assertFalse(s.obtemBoolean(1));
     }
+
+    @Test
+    public void objetoComUmCaractere() {
+        // Primeiro byte não usado
+        // Segundo byte a quantidade de campos
+        // Demais bytes, um para cada campo, o tipo correspondente.
+        byte[] meta = new byte[] { 0, 1, Seed.CHAR };
+
+        Seed s = Seed.serializa(meta);
+
+        s.defineChar(0, 'x');
+
+        // Serialização produzida
+        byte[] vetor = s.array();
+
+        Seed r = Seed.desserializa(vetor);
+
+        assertEquals('x', s.obtemChar(0));
+    }
 }
 
