@@ -159,200 +159,43 @@ public class Seed {
     }
 
     /**
-     * Empacota um byte.
+     * Recupera o vetor de bytes empregado no processo de
+     * serialização/desserialização.
      *
-     * @param valor Byte a ser empacotado.
-     *
-     * @return Vetor de bytes contendo o byte.
+     * @return Vetor de bytes exatamente como fornecido na desserialização
+     * ou o vetor de bytes (todos eles utilizados) no processo de
+     * serialização.
      */
-    public byte[] pack(byte valor) {
-        return new byte[] { valor };
+    public byte[] array() {
+        byte[] bytesUsados = new byte[tamanhoRegistro()];
+
+        buffer.position(0);
+        buffer.get(bytesUsados);
+
+        return bytesUsados;
     }
 
     /**
-     * Recupera {@code byte} depositado no buffer na posição indicada.
+     * Identifica o tamanho em bytes do registro.
      *
-     * @param buffer Vetor do qual o byte será recuperado.
-     * @param offset Posição inicial do valor a ser recuperado.
-     * @return Valor recuperado do buffer na posição indicada.
+     * @return Quantidade de bytes ocupada pela serialização
+     * do registro.
      */
-    public byte unpackByte(byte[] buffer, int offset) {
-        return buffer[offset];
-    }
+    public int tamanhoRegistro() {
+        int membros = buffer.get(1);
 
-    /**
-     * Empacota um {@code short} em vetor de bytes.
-     *
-     * @param valor Valor a ser empacotado.
-     *
-     * @return Vetor de bytes contendo o valor empacotado.
-     */
-    public byte[] pack(short valor) {
-        ByteBuffer buffer = ByteBuffer.allocate(2);
-        buffer.putShort(valor);
-        return buffer.array();
-    }
+        int total = 0;
+        for (int i = 0; i < membros; i++) {
+            byte tipo = buffer.get(i + 2);
+            if (tipo == STRING || tipo == VETOR) {
+                buffer.position(offset(i));
+                total = total + buffer.getInt();
+            } else {
+                total = total + tamanho[tipo];
+            }
+        }
 
-    /**
-     * Recupera {@code short} depositado no buffer na posição indicada.
-     *
-     * @param buffer Vetor do qual o {@code short} será recuperado.
-     * @param offset Posição inicial do valor a ser recuperado.
-     * @return Valor recuperado do buffer na posição indicada.
-     */
-    public short unpackShort(byte[] buffer, int offset) {
-        ByteBuffer wrapped = ByteBuffer.wrap(buffer);
-        return wrapped.getShort(offset);
-    }
-
-    /**
-     * Empacota um {@code int} em vetor de bytes.
-     *
-     * @param valor Valor a ser empacotado.
-     *
-     * @return Vetor de bytes contendo o valor empacotado.
-     */
-    public byte[] pack(int valor) {
-        ByteBuffer buffer = ByteBuffer.allocate(4);
-        buffer.putInt(valor);
-        return buffer.array();
-    }
-
-    /**
-     * Recupera {@code int} depositado no buffer na posição indicada.
-     *
-     * @param buffer Vetor do qual o {@code int} será recuperado.
-     * @param offset Posição inicial do valor a ser recuperado.
-     * @return Valor recuperado do buffer na posição indicada.
-     */
-    public int unpackInt(byte[] buffer, int offset) {
-        ByteBuffer wrapped = ByteBuffer.wrap(buffer);
-        return wrapped.getInt(offset);
-    }
-
-    /**
-     * Empacota um {@code long} em vetor de bytes.
-     *
-     * @param valor Valor a ser empacotado.
-     *
-     * @return Vetor de bytes contendo o valor empacotado.
-     */
-    public byte[] pack(long valor) {
-        ByteBuffer buffer = ByteBuffer.allocate(8);
-        buffer.putLong(valor);
-        return buffer.array();
-    }
-
-    /**
-     * Recupera {@code long} depositado no buffer na posição indicada.
-     *
-     * @param buffer Vetor do qual o {@code long} será recuperado.
-     * @param offset Posição inicial do valor a ser recuperado.
-     * @return Valor recuperado do buffer na posição indicada.
-     */
-    public long unpackLong(byte[] buffer, int offset) {
-        ByteBuffer wrapped = ByteBuffer.wrap(buffer);
-        return wrapped.getLong(offset);
-    }
-
-    /**
-     * Empacota um {@code float} em vetor de bytes.
-     *
-     * @param valor Valor a ser empacotado.
-     *
-     * @return Vetor de bytes contendo o valor empacotado.
-     */
-    public byte[] pack(float valor) {
-        ByteBuffer buffer = ByteBuffer.allocate(4);
-        buffer.putFloat(valor);
-        return buffer.array();
-    }
-
-    /**
-     * Recupera {@code float} depositado no buffer na posição indicada.
-     *
-     * @param buffer Vetor do qual o {@code float} será recuperado.
-     * @param offset Posição inicial do valor a ser recuperado.
-     * @return Valor recuperado do buffer na posição indicada.
-     */
-    public float unpackFloat(byte[] buffer, int offset) {
-        ByteBuffer wrapped = ByteBuffer.wrap(buffer);
-        return wrapped.getFloat(offset);
-    }
-
-    /**
-     * Empacota um {@code double} em vetor de bytes.
-     *
-     * @param valor Valor a ser empacotado.
-     *
-     * @return Vetor de bytes contendo o valor empacotado.
-     */
-    public byte[] pack(double valor) {
-        ByteBuffer buffer = ByteBuffer.allocate(8);
-        buffer.putDouble(valor);
-        return buffer.array();
-    }
-
-    /**
-     * Recupera {@code double} depositado no buffer na posição indicada.
-     *
-     * @param buffer Vetor do qual o {@code double} será recuperado.
-     * @param offset Posição inicial do valor a ser recuperado.
-     * @return Valor recuperado do buffer na posição indicada.
-     */
-    public double unpackDouble(byte[] buffer, int offset) {
-        ByteBuffer wrapped = ByteBuffer.wrap(buffer);
-        return wrapped.getDouble(offset);
-    }
-
-    /**
-     * Empacota um {@code boolean} em vetor de bytes.
-     *
-     * @param valor Valor a ser empacotado.
-     *
-     * @return Vetor de bytes contendo o valor empacotado.
-     */
-    public byte[] pack(boolean valor) {
-        ByteBuffer buffer = ByteBuffer.allocate(1);
-        buffer.put((byte)(valor ? 1 : 0));
-        return buffer.array();
-    }
-
-    /**
-     * Recupera {@code boolean} depositado no buffer na posição indicada.
-     *
-     * @param buffer Vetor do qual o {@code boolean} será recuperado.
-     * @param offset Posição inicial do valor a ser recuperado.
-     * @return Valor recuperado do buffer na posição indicada.
-     */
-    public boolean unpackBoolean(byte[] buffer, int offset) {
-        ByteBuffer wrapped = ByteBuffer.wrap(buffer);
-        return wrapped.get(offset) == 1;
-    }
-
-    /**
-     * Empacota um {@code char} em vetor de bytes.
-     *
-     * @param valor Valor a ser empacotado.
-     *
-     * @return Vetor de bytes contendo o valor empacotado.
-     */
-    public byte[] pack(char valor) {
-        ByteBuffer buffer = ByteBuffer.allocate(2);
-        buffer.putChar(valor);
-        return buffer.array();
-    }
-
-    /**
-     * Recupera {@code char} depositado no buffer na posição indicada.
-     *
-     * @param buffer Vetor do qual o {@code char} será recuperado.
-     * @param offset Posição inicial do valor a ser recuperado.
-     * @return Valor recuperado do buffer na posição indicada.
-     */
-    public char unpackChar(byte[] buffer, int offset) {
-        ByteBuffer wrapped = ByteBuffer.wrap(buffer);
-        return wrapped.getChar(offset);
+        return offsetInicio + total;
     }
 
     /**
@@ -398,30 +241,10 @@ public class Seed {
         return new String(strBytes, "UTF-8");
     }
 
-    public byte[] array() {
-        byte[] bytesUsados = new byte[tamanhoRegistro()];
-
-        buffer.position(0);
-        buffer.get(bytesUsados);
-
-        return bytesUsados;
-    }
-
-    /**
-     * Identifica o tamanho em bytes do registro.
-     *
-     * @return Quantidade de bytes ocupada pela serialização
-     * do registro.
-     */
-    public int tamanhoRegistro() {
-        int membros = buffer.get(1);
-
-        // Deslocamento de todos os campos.
-        return offset(membros);
-    }
-
     public void defineBoolean(int ordem, boolean valor) {
-        byte[] bytesValor = pack(valor);
+        ByteBuffer buffer1 = ByteBuffer.allocate(1);
+        buffer1.put((byte)(valor ? 1 : 0));
+        byte[] bytesValor = buffer1.array();
         buffer.position(offset(ordem));
         buffer.put(bytesValor);
     }
@@ -444,7 +267,9 @@ public class Seed {
      * @param valor O valor a ser definido para o campo.
      */
     public void defineChar(int ordem, char valor) {
-        byte[] bytesValor = pack(valor);
+        ByteBuffer buffer1 = ByteBuffer.allocate(2);
+        buffer1.putChar(valor);
+        byte[] bytesValor = buffer1.array();
         buffer.position(offset(ordem));
         buffer.put(bytesValor);
     }
@@ -502,6 +327,123 @@ public class Seed {
      */
     public short obtemShort(int ordem) {
         return buffer.getShort(offset(ordem));
+    }
+
+    /**
+     * Define o valor {@code int} para a ordem indicada
+     * no registro.
+     *
+     * @param ordem A ordem do campo no registro.
+     * @param valor O valor a ser definido para o campo.
+     */
+    public void defineInt(int ordem, int valor) {
+        buffer.position(offset(ordem));
+        buffer.putInt(valor);
+    }
+
+    /**
+     * Recupera o valor {@code int} da ordem indicada do registro.
+     *
+     * @param ordem A ordem do campo no registro.
+     * @return Valor do caractere armazenado no registro.
+     *
+     */
+    public int obtemInt(int ordem) {
+        return buffer.getInt(offset(ordem));
+    }
+
+    /**
+     * Define o valor {@code long} para a ordem indicada
+     * no registro.
+     *
+     * @param ordem A ordem do campo no registro.
+     * @param valor O valor a ser definido para o campo.
+     */
+    public void defineLong(int ordem, long valor) {
+        buffer.position(offset(ordem));
+        buffer.putLong(valor);
+    }
+
+    /**
+     * Recupera o valor {@code long} da ordem indicada do registro.
+     *
+     * @param ordem A ordem do campo no registro.
+     * @return Valor do caractere armazenado no registro.
+     *
+     */
+    public long obtemLong(int ordem) {
+        return buffer.getLong(offset(ordem));
+    }
+
+    /**
+     * Define o valor {@code float} para a ordem indicada
+     * no registro.
+     *
+     * @param ordem A ordem do campo no registro.
+     * @param valor O valor a ser definido para o campo.
+     */
+    public void defineFloat(int ordem, float valor) {
+        buffer.position(offset(ordem));
+        buffer.putFloat(valor);
+    }
+
+    /**
+     * Recupera o valor {@code float} da ordem indicada do registro.
+     *
+     * @param ordem A ordem do campo no registro.
+     * @return Valor do caractere armazenado no registro.
+     *
+     */
+    public float obtemFloat(int ordem) {
+        return buffer.getFloat(offset(ordem));
+    }
+
+    /**
+     * Define o valor {@code double} para a ordem indicada
+     * no registro.
+     *
+     * @param ordem A ordem do campo no registro.
+     * @param valor O valor a ser definido para o campo.
+     */
+    public void defineDouble(int ordem, double valor) {
+        buffer.position(offset(ordem));
+        buffer.putDouble(valor);
+    }
+
+    /**
+     * Recupera o valor {@code double} da ordem indicada do registro.
+     *
+     * @param ordem A ordem do campo no registro.
+     * @return Valor do caractere armazenado no registro.
+     *
+     */
+    public double obtemDouble(int ordem) {
+        return buffer.getDouble(offset(ordem));
+    }
+
+    /**
+     * Define o valor {@code String} para a ordem indicada
+     * no registro.
+     *
+     * @param ordem A ordem do campo no registro.
+     * @param valor O valor a ser definido para o campo.
+     */
+    public void defineString(int ordem, String valor) throws UnsupportedEncodingException {
+        buffer.position(offset(ordem));
+        buffer.put(pack(valor));
+    }
+
+    /**
+     * Recupera o valor {@code double} da ordem indicada do registro.
+     *
+     * @param ordem A ordem do campo no registro.
+     * @return Valor do caractere armazenado no registro.
+     *
+     */
+    public String obtemString(int ordem) throws UnsupportedEncodingException {
+        int delta = offset(ordem);
+        buffer.position(delta);
+        return unpackString(buffer.array(), delta);
     }
 
     /**

@@ -11,20 +11,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class SeedTest {
 
     @Test
-    public void tiposPrimitivos() {
-        byte[] meta = new byte[0];
-        Seed s = Seed.serializa(meta);
-        assertEquals(121, s.unpackByte(s.pack((byte)121), 0));
-        assertEquals(500, s.unpackShort(s.pack((short)500), 0));
-        assertEquals(500, s.unpackInt(s.pack(500), 0));
-        assertEquals(500, s.unpackLong(s.pack((long)500), 0));
-        assertEquals(5.1, s.unpackFloat(s.pack((float)5.1), 0), 0.0001d);
-        assertEquals(5.1, s.unpackDouble(s.pack((double)5.1), 0), 0.0001d);
-        assertEquals('a', s.unpackChar(s.pack('a'), 0));
-        assertEquals(false, s.unpackBoolean(s.pack(false), 0));
-    }
-
-    @Test
     public void tipoString() throws UnsupportedEncodingException {
         byte[] m = new byte[0];
         Seed s = Seed.serializa(m);
@@ -70,12 +56,12 @@ public class SeedTest {
 
         Seed r = Seed.desserializa(vetor);
 
-        assertTrue(s.obtemBoolean(0));
-        assertFalse(s.obtemBoolean(1));
+        assertTrue(r.obtemBoolean(0));
+        assertFalse(r.obtemBoolean(1));
     }
 
     @Test
-    public void registroComUmCaractere() {
+    public void registroComUmChar() {
         // Primeiro byte não usado
         // Segundo byte a quantidade de campos
         // Demais bytes, um para cada campo, o tipo correspondente.
@@ -90,7 +76,7 @@ public class SeedTest {
 
         Seed r = Seed.desserializa(vetor);
 
-        assertEquals('x', s.obtemChar(0));
+        assertEquals('x', r.obtemChar(0));
     }
 
     @Test
@@ -109,7 +95,7 @@ public class SeedTest {
 
         Seed r = Seed.desserializa(vetor);
 
-        assertEquals(11, s.obtemByte(0));
+        assertEquals(11, r.obtemByte(0));
     }
 
     @Test
@@ -125,7 +111,89 @@ public class SeedTest {
 
         Seed r = Seed.desserializa(vetor);
 
-        assertEquals(11, s.obtemShort(0));
+        assertEquals(11, r.obtemShort(0));
+    }
+
+    @Test
+    public void registroComUmInt() {
+        byte[] meta = new byte[] { 0, 1, Seed.INT };
+
+        Seed s = Seed.serializa(meta);
+
+        s.defineInt(0, 11);
+
+        // Serialização produzida
+        byte[] vetor = s.array();
+
+        Seed r = Seed.desserializa(vetor);
+
+        assertEquals(11, r.obtemInt(0));
+    }
+
+    @Test
+    public void registroComUmLong() {
+        byte[] meta = new byte[] { 0, 1, Seed.LONG };
+
+        Seed s = Seed.serializa(meta);
+
+        s.defineLong(0, 11l);
+
+        // Serialização produzida
+        byte[] vetor = s.array();
+
+        Seed r = Seed.desserializa(vetor);
+
+        assertEquals(11, r.obtemLong(0));
+    }
+
+    @Test
+    public void registroComUmFloat() {
+        byte[] meta = new byte[] { 0, 1, Seed.FLOAT };
+
+        Seed s = Seed.serializa(meta);
+
+        s.defineFloat(0, 3.1415f);
+
+        // Serialização produzida
+        byte[] vetor = s.array();
+
+        Seed r = Seed.desserializa(vetor);
+
+        assertEquals(3.1415, r.obtemFloat(0), 0.0001d);
+    }
+
+    @Test
+    public void registroComUmDouble() {
+        byte[] meta = new byte[] { 0, 1, Seed.DOUBLE };
+
+        Seed s = Seed.serializa(meta);
+
+        s.defineDouble(0, 11.4d);
+
+        // Serialização produzida
+        byte[] vetor = s.array();
+
+        Seed r = Seed.desserializa(vetor);
+
+        assertEquals(11.4d, r.obtemDouble(0), 0.0001d);
+    }
+
+    @Test
+    public void registroComUmaString() throws UnsupportedEncodingException {
+        byte[] meta = new byte[] { 0, 1, Seed.STRING };
+
+        Seed s = Seed.serializa(meta);
+
+        String msg = "A vida é bela!";
+
+        s.defineString(0, msg);
+
+        // Serialização produzida
+        byte[] vetor = s.array();
+
+        Seed r = Seed.desserializa(vetor);
+
+        assertEquals(msg, r.obtemString(0));
     }
 }
 
