@@ -36,7 +36,7 @@ public class SeedTest {
     }
 
     @Test
-    public void objetoComUmMembroPrimitivo() {
+    public void registroComUmBoolean() {
         // Primeiro byte não usado
         // Segundo byte indica quantidade de campos do registro
         // Terceiro byte indica tipo armazenado
@@ -54,7 +54,7 @@ public class SeedTest {
     }
 
     @Test
-    public void objetoComDoisMembrosPrimitivos() {
+    public void registroComDoisMembrosPrimitivos() {
         // Primeiro byte não usado
         // Segundo byte a quantidade de campos
         // Demais bytes, um para cada campo, o tipo correspondente.
@@ -75,7 +75,7 @@ public class SeedTest {
     }
 
     @Test
-    public void objetoComUmCaractere() {
+    public void registroComUmCaractere() {
         // Primeiro byte não usado
         // Segundo byte a quantidade de campos
         // Demais bytes, um para cada campo, o tipo correspondente.
@@ -91,6 +91,41 @@ public class SeedTest {
         Seed r = Seed.desserializa(vetor);
 
         assertEquals('x', s.obtemChar(0));
+    }
+
+    @Test
+    public void registroComUmByte() {
+        // Primeiro byte não usado
+        // Segundo byte a quantidade de campos
+        // Demais bytes, um para cada campo, o tipo correspondente.
+        byte[] meta = new byte[] { 0, 1, Seed.BYTE };
+
+        Seed s = Seed.serializa(meta);
+
+        s.defineByte(0, (byte)11);
+
+        // Serialização produzida
+        byte[] vetor = s.array();
+
+        Seed r = Seed.desserializa(vetor);
+
+        assertEquals(11, s.obtemByte(0));
+    }
+
+    @Test
+    public void registroComUmShort() {
+        byte[] meta = new byte[] { 0, 1, Seed.SHORT };
+
+        Seed s = Seed.serializa(meta);
+
+        s.defineShort(0, (short)11);
+
+        // Serialização produzida
+        byte[] vetor = s.array();
+
+        Seed r = Seed.desserializa(vetor);
+
+        assertEquals(11, s.obtemShort(0));
     }
 }
 

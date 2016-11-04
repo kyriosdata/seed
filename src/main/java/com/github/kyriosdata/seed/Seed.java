@@ -461,6 +461,50 @@ public class Seed {
     }
 
     /**
+     * Define o byte para a ordem indicada.
+     *
+     * @param ordem A ordem do campo no registro.
+     * @param valor O valor a ser definido para o campo.
+     */
+    public void defineByte(int ordem, byte valor) {
+        buffer.position(offset(ordem));
+        buffer.put(valor);
+    }
+
+    /**
+     * Recupera o byte do registro.
+     *
+     * @param ordem A ordem do caractere no registro.
+     * @return Valor do caractere armazenado no registro.
+     *
+     */
+    public byte obtemByte(int ordem) {
+        return buffer.get(offset(ordem));
+    }
+
+    /**
+     * Define o valor {@code short} para a ordem indicada.
+     *
+     * @param ordem A ordem do campo no registro.
+     * @param valor O valor a ser definido para o campo.
+     */
+    public void defineShort(int ordem, short valor) {
+        buffer.position(offset(ordem));
+        buffer.putShort(valor);
+    }
+
+    /**
+     * Recupera o valor {@code short} da ordem indicada do registro.
+     *
+     * @param ordem A ordem do campo no registro.
+     * @return Valor do caractere armazenado no registro.
+     *
+     */
+    public short obtemShort(int ordem) {
+        return buffer.getShort(offset(ordem));
+    }
+
+    /**
      * Produz o deslocamento em bytes a partir
      * do início do registro, no qual inicia-se o
      * campo de ordem indicada.
@@ -479,4 +523,6 @@ public class Seed {
 
         return delta;
     }
+
+
 }
