@@ -213,6 +213,11 @@ public class Seed {
      */
     public byte[] pack(String valor) throws UnsupportedEncodingException {
         byte[] bytes = valor.getBytes("UTF-8");
+
+        return pack(bytes);
+    }
+
+    public byte[] pack(byte[] bytes) {
         int tamanho = bytes.length;
 
         // Guarda tamanho (int) + os bytes da String propriamente dita
@@ -233,6 +238,12 @@ public class Seed {
      * não esteja disponível.
      */
     public String unpackString(byte[] buffer, int offset) throws UnsupportedEncodingException {
+        byte[] strBytes = unpackByteArray(buffer, offset);
+
+        return new String(strBytes, "UTF-8");
+    }
+
+    public byte[] unpackByteArray(byte[] buffer, int offset) {
         ByteBuffer wrapped = ByteBuffer.wrap(buffer);
 
         int tamanho = wrapped.getInt(offset);
@@ -240,8 +251,7 @@ public class Seed {
 
         wrapped.position(offset + 4);
         wrapped.get(strBytes, 0, tamanho);
-
-        return new String(strBytes, "UTF-8");
+        return strBytes;
     }
 
     public void defineBoolean(int ordem, boolean valor) {
@@ -447,6 +457,31 @@ public class Seed {
         int delta = offset(ordem);
         buffer.position(delta);
         return unpackString(buffer.array(), delta);
+    }
+
+    /**
+     * Define o vetor de bytes para a ordem indicada
+     * no registro.
+     *
+     * @param ordem A ordem do campo no registro.
+     * @param valor O valor a ser definido para o campo.
+     */
+    public void defineByteArray(int ordem, byte[] valor) throws UnsupportedEncodingException {
+        buffer.position(offset(ordem));
+        buffer.put(pack(valor));
+    }
+
+    /**
+     * Recupera o vetor de bytes da ordem indicada do registro.
+     *
+     * @param ordem A ordem do campo no registro.
+     * @return Valor do caractere armazenado no registro.
+     *
+     */
+    public byte[] obtemByteArray(int ordem) throws UnsupportedEncodingException {
+        int delta = offset(ordem);
+        buffer.position(delta);
+        return unpackByteArray(buffer.array(), delta);
     }
 
     /**

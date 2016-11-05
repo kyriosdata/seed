@@ -195,5 +195,24 @@ public class SeedTest {
 
         assertEquals(msg, r.obtemString(0));
     }
+
+    @Test
+    public void registroComUmVetorDeBytes() throws UnsupportedEncodingException {
+        byte[] meta = new byte[] { 0, 1, Seed.VETOR };
+
+        Seed s = Seed.serializa(meta);
+
+        String msg = "A vida é bela!";
+        byte[] dados = msg.getBytes("UTF-8");
+
+        s.defineByteArray(0, dados);
+
+        // Serialização produzida
+        byte[] vetor = s.array();
+
+        Seed r = Seed.desserializa(vetor);
+
+        assertEquals(msg, new String(r.obtemByteArray(0), "UTF-8"));
+    }
 }
 
