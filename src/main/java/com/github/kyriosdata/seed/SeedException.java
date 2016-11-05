@@ -14,8 +14,9 @@ package com.github.kyriosdata.seed;
 public class SeedException extends RuntimeException {
 
     /**
-     * Cria exceção com mensagem associada.
-     * @param msg
+     * Cria registro de situação excepcional com Seed.
+     * @param msg Mensagem que fornece detalhes da exceção
+     *            ocorrida.
      */
     public SeedException(String msg) {
         super(msg);

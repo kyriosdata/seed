@@ -86,14 +86,14 @@ public class Seed {
     /**
      * Tamanho máximo do buffer empregado para montar o registro.
      */
-    public static final int MAX_BUFFER_SIZE = 128;
+    private static final int MAX_BUFFER_SIZE = 128;
 
     /**
      * Tamanhos empregados para armazenar cada um dos
      * tipos primitivos. Observe que o valor do tipo
      * é o índice no vetor para o tamanho correspondente.
      */
-    private int[] tamanho = new int[] { 1, 2, 4, 8, 4, 8, 1, 2, 0, 0 };
+    private final int[] tamanho = new int[] { 1, 2, 4, 8, 4, 8, 1, 2, 0, 0 };
 
     /**
      * Marca início dos dados propriamente ditos, primeiro
@@ -166,7 +166,7 @@ public class Seed {
      *
      * @return A posição do primeiro byte de dados do registro.
      */
-    public int posicaoInicialDados() {
+    private int posicaoInicialDados() {
         return buffer.get(POS_QTDE) + 2;
     }
 
@@ -193,7 +193,7 @@ public class Seed {
      * @return Quantidade de bytes ocupada pela serialização
      * do registro.
      */
-    public int tamanhoRegistro() {
+    private int tamanhoRegistro() {
         int membros = buffer.get(1);
 
         int total = 0;
@@ -242,7 +242,7 @@ public class Seed {
      *
      * @see #unpackByteArray(byte[], int)
      */
-    public byte[] pack(byte[] bytes) {
+    private byte[] pack(byte[] bytes) {
         int tamanho = bytes.length;
 
         // Guarda tamanho (int) + os bytes da String propriamente dita
@@ -283,7 +283,7 @@ public class Seed {
      *
      * @see #pack(byte[])
      */
-    public byte[] unpackByteArray(byte[] buffer, int offset) {
+    private byte[] unpackByteArray(byte[] buffer, int offset) {
         ByteBuffer wrapped = ByteBuffer.wrap(buffer);
 
         int tamanho = wrapped.getInt(offset);
@@ -534,7 +534,7 @@ public class Seed {
      * @return Quantidade de bytes, a partir da qual se
      * inicia o membro de ordem indicada.
      */
-    public int offset(int ordem) {
+    private int offset(int ordem) {
         int delta = offsetInicio;
         for (int i = 0; i < ordem; i++) {
             int tipo = buffer.get(i + 2);

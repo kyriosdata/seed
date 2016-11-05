@@ -136,7 +136,7 @@ public class SeedTest {
 
         Seed s = Seed.serializa(meta);
 
-        s.defineLong(0, 11l);
+        s.defineLong(0, 11L);
 
         // Serialização produzida
         byte[] vetor = s.array();
