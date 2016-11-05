@@ -189,7 +189,10 @@ public class Seed {
             byte tipo = buffer.get(i + 2);
             if (tipo == STRING || tipo == VETOR) {
                 buffer.position(offset(i));
-                total = total + buffer.getInt();
+
+                // Inclui o inteiro que guarda o tamanho
+                // mais a quantidade de bytes por ele indicada
+                total = total + 4 + buffer.getInt();
             } else {
                 total = total + tamanho[tipo];
             }
@@ -235,7 +238,7 @@ public class Seed {
         int tamanho = wrapped.getInt(offset);
         byte[] strBytes = new byte[tamanho];
 
-        wrapped.position(4);
+        wrapped.position(offset + 4);
         wrapped.get(strBytes, 0, tamanho);
 
         return new String(strBytes, "UTF-8");
