@@ -11,17 +11,19 @@ import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
 
 /**
- * Serializa um registro, formado por uma combinação de valores
- * de tipo primitivo, uma sequência de caracteres ou um vetor
- * de bytes, em uma sequência de bytes e, no sentido inverso,
- * recupera os campos do registro a partir do vetor de bytes gerado.
+ * Serializa um registro em um vetor de bytes, formado por uma
+ * combinação de valores e, no sentido inverso, permite recuperar
+ * os valores correspondentes.
+ *
+ * <p>Cada registro é formado por uma sequência de campos. Cada um
+ * deles de um tipo primitivo, uma sequência de caracteres (String)
+ * ou vetor de bytes.
  *
  * <p>Cada registro é precedido pela metainformação correspondente.
  * Essa metainformação é definida por uma sequência de bytes.
  * O primeiro deles não é empregado. O segundo indica a quantidade
- * de campos (ou seja, limitada a 128) e, na sequência, para cada
- * um dos campos (quantidade indicada no segundo byte), o tipo
- * correspondente.
+ * de campos do registro (ou seja, limitado a 128 campos) e, na
+ * sequência, para cada um dos campos, o tipo correspondente.
  */
 public class Seed {
 
@@ -109,7 +111,8 @@ public class Seed {
     }
 
     /**
-     * Cria uma instância com a metainformação indicada.
+     * Cria uma instância com a metainformação indicada
+     * a ser utilizada para serialização.
      *
      * @param meta Metainformação associada ao objeto
      *             a ser serializado. Primeiro byte indica
@@ -135,6 +138,15 @@ public class Seed {
         return s;
     }
 
+    /**
+     * Cria uma instância a ser utilizada para recuperar valores
+     * do vetor de bytes previamente serializado.
+     *
+     * @param dados Vetor de bytes previamente serializado conforme
+     *              a descrição dessa classe.
+     *
+     * @return Instância que recupera valores do vetor de bytes.
+     */
     public static Seed desserializa(byte[] dados) {
         Seed s = new Seed();
 
