@@ -220,15 +220,28 @@ public class Seed {
      *
      * @return Vetor de bytes contendo o valor empacotado.
      *
-     * @throws UnsupportedEncodingException Caso o suporte para UTF-8
-     * não esteja disponível.
+     * @throws SeedException Caso não exista suporte para UTF-8.
      */
-    public byte[] pack(String valor) throws UnsupportedEncodingException {
-        byte[] bytes = valor.getBytes("UTF-8");
+    public byte[] pack(String valor) {
+        byte[] bytes;
+
+        try {
+            bytes = valor.getBytes("UTF-8");
+        } catch (UnsupportedEncodingException exp) {
+            throw new SeedException("UTF-8 not supported");
+        }
 
         return pack(bytes);
     }
 
+    /**
+     * Empacota o vertor de bytes em outro vetor de bytes.
+     *
+     * @param bytes Vetor de bytes a ser empacotado.
+     * @return Vetor de bytes que empacota um vetor de bytes.
+     *
+     * @see #unpackByteArray(byte[], int)
+     */
     public byte[] pack(byte[] bytes) {
         int tamanho = bytes.length;
 
@@ -246,15 +259,30 @@ public class Seed {
      * @param offset Posição inicial do valor a ser recuperado.
      * @return Valor recuperado do buffer na posição indicada.
      *
-     * @throws UnsupportedEncodingException Caso o suporte para UTF-8
-     * não esteja disponível.
+     * @throws SeedException Caso não exista suporte para UTF-8.
      */
-    public String unpackString(byte[] buffer, int offset) throws UnsupportedEncodingException {
+    public String unpackString(byte[] buffer, int offset) {
         byte[] strBytes = unpackByteArray(buffer, offset);
 
-        return new String(strBytes, "UTF-8");
+        try {
+            return new String(strBytes, "UTF-8");
+        } catch (UnsupportedEncodingException ex) {
+            throw new SeedException("UTF-8 not supported");
+        }
     }
 
+    /**
+     * Recupera o vetor de bytes disponível no buffer a partir
+     * da posição indicada.
+     *
+     * @param buffer Buffer que contém o vetor de bytes.
+     *
+     * @param offset Posição inicial do vetor de bytes no buffer.
+     *
+     * @return Vetor de bytes.
+     *
+     * @see #pack(byte[])
+     */
     public byte[] unpackByteArray(byte[] buffer, int offset) {
         ByteBuffer wrapped = ByteBuffer.wrap(buffer);
 
@@ -453,7 +481,7 @@ public class Seed {
      * @param ordem A ordem do campo no registro.
      * @param valor O valor a ser definido para o campo.
      */
-    public void defineString(int ordem, String valor) throws UnsupportedEncodingException {
+    public void defineString(int ordem, String valor) {
         buffer.position(offset(ordem));
         buffer.put(pack(valor));
     }
@@ -465,7 +493,7 @@ public class Seed {
      * @return Valor do caractere armazenado no registro.
      *
      */
-    public String obtemString(int ordem) throws UnsupportedEncodingException {
+    public String obtemString(int ordem) {
         int delta = offset(ordem);
         buffer.position(delta);
         return unpackString(buffer.array(), delta);
@@ -478,7 +506,7 @@ public class Seed {
      * @param ordem A ordem do campo no registro.
      * @param valor O valor a ser definido para o campo.
      */
-    public void defineByteArray(int ordem, byte[] valor) throws UnsupportedEncodingException {
+    public void defineByteArray(int ordem, byte[] valor) {
         buffer.position(offset(ordem));
         buffer.put(pack(valor));
     }
@@ -490,7 +518,7 @@ public class Seed {
      * @return Valor do caractere armazenado no registro.
      *
      */
-    public byte[] obtemByteArray(int ordem) throws UnsupportedEncodingException {
+    public byte[] obtemByteArray(int ordem) {
         int delta = offset(ordem);
         buffer.position(delta);
         return unpackByteArray(buffer.array(), delta);
