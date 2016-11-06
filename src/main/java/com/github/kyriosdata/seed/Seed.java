@@ -164,6 +164,11 @@ public class Seed {
      * Posição inicial dos dados do registro, ou seja,
      * posição do primeiro byte após metainformações.
      *
+     * <p>O primeiro byte não é utilizado, o segundo
+     * indica a quantidade de campos do registro, ou seja,
+     * a posição inicial é dada pela quantidade de campos
+     * do registro mais 2.
+     *
      * @return A posição do primeiro byte de dados do registro.
      */
     private int posicaoInicialDados() {
@@ -188,7 +193,13 @@ public class Seed {
     }
 
     /**
-     * Identifica o tamanho em bytes do registro.
+     * Identifica o tamanho em bytes do registro após
+     * valores dos campos estarem definidos.
+     *
+     * <p>Observe que antes da definição dos valores dos
+     * campos não é possível identificar o tamanho do registro,
+     * que pode conter campos de tamanho variável como
+     * sequências de caracteres e vetores de byte.
      *
      * @return Quantidade de bytes ocupada pela serialização
      * do registro.
@@ -528,6 +539,15 @@ public class Seed {
      * Produz o deslocamento em bytes a partir
      * do início do registro, no qual inicia-se o
      * campo de ordem indicada.
+     *
+     * <p><b>Importante:</b> esse método só está
+     * definido para registros cujos campos já
+     * foram definidos os respectivos valores.
+     * Ou seja, apenas as metainformações não são
+     * suficientes, mas os valores devem ser
+     * estabelecidos. Convém recordar que sequências
+     * de caracteres e vetores de bytes possuem
+     * tamanho variado.
      *
      * @param ordem Ordem do campo do registro.
      *

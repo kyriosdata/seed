@@ -214,5 +214,61 @@ public class SeedTest {
 
         assertEquals(msg, new String(r.obtemByteArray(0), "UTF-8"));
     }
+
+    @Test
+    public void registroComVariosCampos() {
+        byte[] meta = new byte[] { 0, 10,
+                Seed.VETOR,
+                Seed.BOOLEAN,
+                Seed.STRING,
+                Seed.SHORT,
+                Seed.BYTE,
+                Seed.CHAR,
+                Seed.DOUBLE,
+                Seed.FLOAT,
+                Seed.INT,
+                Seed.LONG
+        };
+
+        Seed s = Seed.serializa(meta);
+
+        byte[] d0 = new byte[] { 1, 2 };
+        boolean d1 = false;
+        String d2 = "açaí";
+        short d3 = 3;
+        byte d4 = 4;
+        char d5 = '@';
+        double d6 = 5.6;
+        float d7 = 7.8f;
+        int d8 = 9;
+        long d9 = 10L;
+
+        s.defineByteArray(0, d0);
+        s.defineBoolean(1, d1);
+        s.defineString(2, d2);
+        s.defineShort(3, d3);
+        s.defineByte(4, d4);
+        s.defineChar(5, d5);
+        s.defineDouble(6, d6);
+        s.defineFloat(7, d7);
+        s.defineInt(8, d8);
+        s.defineLong(9, d9);
+
+        // Registro serializado
+        byte[] vetor = s.array();
+
+        Seed r = Seed.desserializa(vetor);
+
+        assertEquals(d0, s.obtemByteArray(0));
+        assertEquals(d1, s.obtemBoolean(1));
+        assertEquals(d2, s.obtemString(2));
+        assertEquals(d3, s.obtemShort(3));
+        assertEquals(d4, s.obtemByte(4));
+        assertEquals(d5, s.obtemChar(5));
+        assertEquals(d6, s.obtemDouble(6), 0.0001d);
+        assertEquals(d7, s.obtemFloat(7), 0.0001d);
+        assertEquals(d8, s.obtemInt(8));
+        assertEquals(d9, s.obtemLong(9));
+    }
 }
 
