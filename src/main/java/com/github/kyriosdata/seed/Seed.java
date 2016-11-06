@@ -193,38 +193,6 @@ public class Seed {
     }
 
     /**
-     * Identifica o tamanho em bytes do registro após
-     * valores dos campos estarem definidos.
-     *
-     * <p>Observe que antes da definição dos valores dos
-     * campos não é possível identificar o tamanho do registro,
-     * que pode conter campos de tamanho variável como
-     * sequências de caracteres e vetores de byte.
-     *
-     * @return Quantidade de bytes ocupada pela serialização
-     * do registro.
-     */
-    private int tamanhoRegistro() {
-        int membros = buffer.get(1);
-
-        int total = 0;
-        for (int i = 0; i < membros; i++) {
-            byte tipo = buffer.get(i + 2);
-            if (tipo == STRING || tipo == VETOR) {
-                buffer.position(offset(i));
-
-                // Inclui o inteiro que guarda o tamanho
-                // mais a quantidade de bytes por ele indicada
-                total = total + 4 + buffer.getInt();
-            } else {
-                total = total + tamanho[tipo];
-            }
-        }
-
-        return offsetInicio + total;
-    }
-
-    /**
      * Empacota um {@code String} em vetor de bytes.
      *
      * @param valor Valor a ser empacotado.
@@ -557,12 +525,50 @@ public class Seed {
     private int offset(int ordem) {
         int delta = offsetInicio;
         for (int i = 0; i < ordem; i++) {
-            int tipo = buffer.get(i + 2);
-            delta = delta + tamanho[tipo];
+            byte tipo = buffer.get(i + 2);
+            if (tipo == STRING || tipo == VETOR) {
+                buffer.position(offset(i));
+
+                // Inclui o inteiro que guarda o tamanho
+                // mais a quantidade de bytes por ele indicada
+                delta = delta + 4 + buffer.getInt();
+            } else {
+                delta = delta + tamanho[tipo];
+            }
         }
 
         return delta;
     }
 
+    /**
+     * Identifica o tamanho em bytes do registro após
+     * valores dos campos estarem definidos.
+     *
+     * <p>Observe que antes da definição dos valores dos
+     * campos não é possível identificar o tamanho do registro,
+     * que pode conter campos de tamanho variável como
+     * sequências de caracteres e vetores de byte.
+     *
+     * @return Quantidade de bytes ocupada pela serialização
+     * do registro.
+     */
+    private int tamanhoRegistro() {
+        int membros = buffer.get(1);
 
+        int total = offsetInicio;
+        for (int i = 0; i < membros; i++) {
+            byte tipo = buffer.get(i + 2);
+            if (tipo == STRING || tipo == VETOR) {
+                buffer.position(offset(i));
+
+                // Inclui o inteiro que guarda o tamanho
+                // mais a quantidade de bytes por ele indicada
+                total = total + 4 + buffer.getInt();
+            } else {
+                total = total + tamanho[tipo];
+            }
+        }
+
+        return total;
+    }
 }

@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import java.io.UnsupportedEncodingException;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -259,7 +260,7 @@ public class SeedTest {
 
         Seed r = Seed.desserializa(vetor);
 
-        assertEquals(d0, s.obtemByteArray(0));
+        assertArrayEquals(d0, s.obtemByteArray(0));
         assertEquals(d1, s.obtemBoolean(1));
         assertEquals(d2, s.obtemString(2));
         assertEquals(d3, s.obtemShort(3));
