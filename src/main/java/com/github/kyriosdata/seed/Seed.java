@@ -7,14 +7,14 @@
 
 package com.github.kyriosdata.seed;
 
-import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
 
 /**
  * Serializa um registro em um vetor de bytes e, no sentido inverso,
  * permite recuperar os valores correspondentes a partir do vetor
  * gerado anteriormente.
- *
+ * <p>
  * <p>Cada registro é formado por uma sequência de campos, ordenados
  * de 0 até n - 1, onde n é o total de campos. O tipo de um campo pode
  * ser um tipo primitivo, uma sequência de caracteres (String)
@@ -22,19 +22,19 @@ import java.nio.ByteBuffer;
  * {@link #BOOLEAN}, {@link #CHAR}, {@link #STRING}, {@link #VETOR},
  * {@link #SHORT}, {@link #INT}, {@link #LONG}, {@link #FLOAT} e
  * {@link #DOUBLE}.
- *
+ * <p>
  * <p>A serialização do registro inclui, nos bytes iniciais, a
  * metainformação correspondente. A metainformação é empregada
  * para assegurar que as informações originalmente fornecidas possam
  * ser recuperadas.
- *
+ * <p>
  * <p>A metainformação é definida por uma sequência de bytes.
  * O primeiro byte não é empregado. O segundo indica a quantidade
  * de campos do registro (ou seja, limitado a 127 campos) e, na
  * sequência, para cada um dos campos, o tipo correspondente.
  * A definição de cada tipo faz uso de um byte (veja constantes
  * citadas acima).
- *
+ * <p>
  * <p>A construção de um registro após definida a metainformação
  * correspondente deve ser feita estritamente na ordem em que os
  * campos foram definidos na metainformação. Ou seja, o primeiro
@@ -44,14 +44,13 @@ import java.nio.ByteBuffer;
  * de tipos de tamanho variável como sequências de caracteres e
  * vetores de bytes. Nesses casos, o tamanho de cada um deles só
  * pode ser definido quando o valor correspondente é estabelecido.
- *
+ * <p>
  * <p>O uso da classe para a serialização envolve a obtenção de
  * uma instância para tal por meio do método {@link #serializa(byte[])}.
  * A operação inversa exige o uso do método {@link #desserializa(byte[])}.
  * No primeiro caso a metainformação é fornecida (vetor de bytes), no
  * segundo, o vetor de bytes gerado pelo método {@link #array()} deve
  * ser utilizado.
- *
  */
 public class Seed {
 
@@ -121,7 +120,7 @@ public class Seed {
      * tipos primitivos. Observe que o valor do tipo
      * é o índice no vetor para o tamanho correspondente.
      */
-    private final int[] tamanho = new int[] { 1, 2, 4, 8, 4, 8, 1, 2, 0, 0 };
+    private final int[] tamanho = new int[]{1, 2, 4, 8, 4, 8, 1, 2, 0, 0};
 
     /**
      * Marca início dos dados propriamente ditos, primeiro
@@ -172,7 +171,6 @@ public class Seed {
      *
      * @param dados Vetor de bytes previamente serializado conforme
      *              a descrição dessa classe.
-     *
      * @return Instância que recupera valores do vetor de bytes.
      */
     public static Seed desserializa(byte[] dados) {
@@ -207,7 +205,7 @@ public class Seed {
 
     public void defineBoolean(int ordem, boolean valor) {
         ByteBuffer buffer1 = ByteBuffer.allocate(1);
-        buffer1.put((byte)(valor ? 1 : 0));
+        buffer1.put((byte) (valor ? 1 : 0));
         byte[] bytesValor = buffer1.array();
         buffer.position(offset(ordem));
         buffer.put(bytesValor);
@@ -218,7 +216,6 @@ public class Seed {
      *
      * @param ordem A ordem do membro a ser recuperado.
      * @return Valor lógico armazenado no membro.
-     *
      */
     public boolean obtemBoolean(int ordem) {
         return buffer.get(offset(ordem)) == 1;
@@ -243,7 +240,6 @@ public class Seed {
      *
      * @param ordem A ordem do caractere no registro.
      * @return Valor do caractere armazenado no registro.
-     *
      */
     public char obtemChar(int ordem) {
         return buffer.getChar(offset(ordem));
@@ -265,7 +261,6 @@ public class Seed {
      *
      * @param ordem A ordem do caractere no registro.
      * @return Valor do caractere armazenado no registro.
-     *
      */
     public byte obtemByte(int ordem) {
         return buffer.get(offset(ordem));
@@ -287,7 +282,6 @@ public class Seed {
      *
      * @param ordem A ordem do campo no registro.
      * @return Valor do caractere armazenado no registro.
-     *
      */
     public short obtemShort(int ordem) {
         return buffer.getShort(offset(ordem));
@@ -310,7 +304,6 @@ public class Seed {
      *
      * @param ordem A ordem do campo no registro.
      * @return Valor do caractere armazenado no registro.
-     *
      */
     public int obtemInt(int ordem) {
         return buffer.getInt(offset(ordem));
@@ -333,7 +326,6 @@ public class Seed {
      *
      * @param ordem A ordem do campo no registro.
      * @return Valor do caractere armazenado no registro.
-     *
      */
     public long obtemLong(int ordem) {
         return buffer.getLong(offset(ordem));
@@ -356,7 +348,6 @@ public class Seed {
      *
      * @param ordem A ordem do campo no registro.
      * @return Valor do caractere armazenado no registro.
-     *
      */
     public float obtemFloat(int ordem) {
         return buffer.getFloat(offset(ordem));
@@ -379,7 +370,6 @@ public class Seed {
      *
      * @param ordem A ordem do campo no registro.
      * @return Valor do caractere armazenado no registro.
-     *
      */
     public double obtemDouble(int ordem) {
         return buffer.getDouble(offset(ordem));
@@ -402,7 +392,6 @@ public class Seed {
      *
      * @param ordem A ordem do campo no registro.
      * @return Valor do caractere armazenado no registro.
-     *
      */
     public String obtemString(int ordem) {
         int delta = offset(ordem);
@@ -427,7 +416,6 @@ public class Seed {
      *
      * @param ordem A ordem do campo no registro.
      * @return Valor do caractere armazenado no registro.
-     *
      */
     public byte[] obtemByteArray(int ordem) {
         int delta = offset(ordem);
@@ -439,7 +427,7 @@ public class Seed {
      * Produz o deslocamento em bytes a partir
      * do início do registro, no qual inicia-se o
      * campo de ordem indicada.
-     *
+     * <p>
      * <p><b>Importante:</b> esse método só está
      * definido para registros cujos campos já
      * foram definidos os respectivos valores.
@@ -450,7 +438,6 @@ public class Seed {
      * tamanho variado.
      *
      * @param ordem Ordem do campo do registro.
-     *
      * @return Quantidade de bytes, a partir da qual se
      * inicia o membro de ordem indicada.
      */
@@ -475,7 +462,7 @@ public class Seed {
     /**
      * Identifica o tamanho em bytes do registro após
      * valores dos campos estarem definidos.
-     *
+     * <p>
      * <p>Observe que antes da definição dos valores dos
      * campos não é possível identificar o tamanho do registro,
      * que pode conter campos de tamanho variável como
@@ -493,7 +480,7 @@ public class Seed {
     /**
      * Posição inicial dos dados do registro, ou seja,
      * posição do primeiro byte após metainformações.
-     *
+     * <p>
      * <p>O primeiro byte não é utilizado, o segundo
      * indica a quantidade de campos do registro, ou seja,
      * a posição inicial é dada pela quantidade de campos
@@ -509,19 +496,12 @@ public class Seed {
      * Empacota um {@code String} em vetor de bytes.
      *
      * @param valor Valor a ser empacotado.
-     *
      * @return Vetor de bytes contendo o valor empacotado.
-     *
-     * @throws SeedException Caso não exista suporte para UTF-8.
      */
     private byte[] pack(String valor) {
         byte[] bytes;
 
-        try {
-            bytes = valor.getBytes("UTF-8");
-        } catch (UnsupportedEncodingException exp) {
-            throw new SeedException("UTF-8 not supported");
-        }
+        bytes = valor.getBytes(StandardCharsets.UTF_8);
 
         return pack(bytes);
     }
@@ -531,7 +511,6 @@ public class Seed {
      *
      * @param bytes Vetor de bytes a ser empacotado.
      * @return Vetor de bytes que empacota um vetor de bytes.
-     *
      * @see #unpackByteArray(byte[], int)
      */
     private byte[] pack(byte[] bytes) {
@@ -550,17 +529,11 @@ public class Seed {
      * @param buffer Vetor do qual o {@code char} será recuperado.
      * @param offset Posição inicial do valor a ser recuperado.
      * @return Valor recuperado do buffer na posição indicada.
-     *
-     * @throws SeedException Caso não exista suporte para UTF-8.
      */
     private String unpackString(byte[] buffer, int offset) {
         byte[] strBytes = unpackByteArray(buffer, offset);
 
-        try {
-            return new String(strBytes, "UTF-8");
-        } catch (UnsupportedEncodingException ex) {
-            throw new SeedException("UTF-8 not supported");
-        }
+        return new String(strBytes, StandardCharsets.UTF_8);
     }
 
     /**
@@ -568,11 +541,8 @@ public class Seed {
      * da posição indicada.
      *
      * @param buffer Buffer que contém o vetor de bytes.
-     *
      * @param offset Posição inicial do vetor de bytes no buffer.
-     *
      * @return Vetor de bytes.
-     *
      * @see #pack(byte[])
      */
     private byte[] unpackByteArray(byte[] buffer, int offset) {
