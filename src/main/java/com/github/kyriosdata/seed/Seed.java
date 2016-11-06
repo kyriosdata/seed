@@ -14,7 +14,7 @@ import java.nio.charset.StandardCharsets;
  * Serializa um registro em um vetor de bytes e, no sentido inverso,
  * permite recuperar os valores correspondentes a partir do vetor
  * gerado anteriormente.
- * <p>
+ *
  * <p>Cada registro é formado por uma sequência de campos, ordenados
  * de 0 até n - 1, onde n é o total de campos. O tipo de um campo pode
  * ser um tipo primitivo, uma sequência de caracteres (String)
@@ -22,19 +22,19 @@ import java.nio.charset.StandardCharsets;
  * {@link #BOOLEAN}, {@link #CHAR}, {@link #STRING}, {@link #VETOR},
  * {@link #SHORT}, {@link #INT}, {@link #LONG}, {@link #FLOAT} e
  * {@link #DOUBLE}.
- * <p>
+ *
  * <p>A serialização do registro inclui, nos bytes iniciais, a
  * metainformação correspondente. A metainformação é empregada
  * para assegurar que as informações originalmente fornecidas possam
  * ser recuperadas.
- * <p>
+ *
  * <p>A metainformação é definida por uma sequência de bytes.
  * O primeiro byte não é empregado. O segundo indica a quantidade
  * de campos do registro (ou seja, limitado a 127 campos) e, na
  * sequência, para cada um dos campos, o tipo correspondente.
  * A definição de cada tipo faz uso de um byte (veja constantes
  * citadas acima).
- * <p>
+ *
  * <p>A construção de um registro após definida a metainformação
  * correspondente deve ser feita estritamente na ordem em que os
  * campos foram definidos na metainformação. Ou seja, o primeiro
@@ -44,7 +44,7 @@ import java.nio.charset.StandardCharsets;
  * de tipos de tamanho variável como sequências de caracteres e
  * vetores de bytes. Nesses casos, o tamanho de cada um deles só
  * pode ser definido quando o valor correspondente é estabelecido.
- * <p>
+ *
  * <p>O uso da classe para a serialização envolve a obtenção de
  * uma instância para tal por meio do método {@link #serializa(byte[])}.
  * A operação inversa exige o uso do método {@link #desserializa(byte[])}.
@@ -134,6 +134,11 @@ public class Seed {
      */
     private ByteBuffer buffer;
 
+    /**
+     * Evita criação desenecessária de instância.
+     * Consulte {@link #serializa(byte[])} ou
+     * {@link #desserializa(byte[])}.
+     */
     private Seed() {
     }
 
@@ -203,10 +208,15 @@ public class Seed {
         return bytesUsados;
     }
 
+    /**
+     * Define o valor lógico para o campo indicado.
+     * @param ordem A ordem do campo que recebe o valor.
+     * @param valor O valor definido para o campo.
+     */
     public void defineBoolean(int ordem, boolean valor) {
-        ByteBuffer buffer1 = ByteBuffer.allocate(1);
-        buffer1.put((byte) (valor ? 1 : 0));
-        byte[] bytesValor = buffer1.array();
+        ByteBuffer bf = ByteBuffer.allocate(1);
+        bf.put((byte) (valor ? 1 : 0));
+        byte[] bytesValor = bf.array();
         buffer.position(offset(ordem));
         buffer.put(bytesValor);
     }
