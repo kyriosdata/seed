@@ -11,19 +11,40 @@ import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
 
 /**
- * Serializa um registro em um vetor de bytes, formado por uma
- * combinação de valores e, no sentido inverso, permite recuperar
- * os valores correspondentes.
+ * Serializa um registro em um vetor de bytes e, no sentido inverso,
+ * permite recuperar os valores correspondentes a partir do vetor
+ * gerado anteriormente.
  *
- * <p>Cada registro é formado por uma sequência de campos. Cada um
- * deles de um tipo primitivo, uma sequência de caracteres (String)
- * ou vetor de bytes.
+ * <p>Cada registro é formado por uma sequência de campos, ordenados
+ * de 0 até n - 1, onde n é o total de campos. O tipo de um campo pode
+ * ser um tipo primitivo, uma sequência de caracteres (String)
+ * ou vetor de bytes. Os tipos possíveis são: {@link #BYTE},
+ * {@link #BOOLEAN}, {@link #CHAR}, {@link #STRING}, {@link #VETOR},
+ * {@link #SHORT}, {@link #INT}, {@link #LONG}, {@link #FLOAT} e
+ * {@link #DOUBLE}.
  *
- * <p>Cada registro é precedido pela metainformação correspondente.
- * Essa metainformação é definida por uma sequência de bytes.
- * O primeiro deles não é empregado. O segundo indica a quantidade
- * de campos do registro (ou seja, limitado a 128 campos) e, na
+ * <p>A serialização do registro inclui, nos bytes iniciais, a
+ * metainformação correspondente. A metainformação é empregada
+ * para assegurar que as informações originalmente fornecidas possam
+ * ser recuperadas.
+ *
+ * <p>A metainformação é definida por uma sequência de bytes.
+ * O primeiro byte não é empregado. O segundo indica a quantidade
+ * de campos do registro (ou seja, limitado a 127 campos) e, na
  * sequência, para cada um dos campos, o tipo correspondente.
+ * A definição de cada tipo faz uso de um byte (veja constantes
+ * citadas acima).
+ *
+ * <p>A construção de um registro após definida a metainformação
+ * correspondente deve ser feita estritamente na ordem em que os
+ * campos foram definidos na metainformação. Ou seja, o primeiro
+ * valor a ser depositado no registro deve ser aquele do primeiro
+ * campo, o segundo deve ser o segundo da metainformação e assim
+ * sucessivamente. Essa exigência decorre, em parte, da existência
+ * de tipos de tamanho variável como sequências de caracteres e
+ * vetores de bytes. Nesses casos, o tamanho de cada um deles só
+ * pode ser definido quando o valor correspondente é estabelecido.
+ *
  */
 public class Seed {
 
@@ -555,20 +576,6 @@ public class Seed {
     private int tamanhoRegistro() {
         int membros = buffer.get(1);
 
-        int total = offsetInicio;
-        for (int i = 0; i < membros; i++) {
-            byte tipo = buffer.get(i + 2);
-            if (tipo == STRING || tipo == VETOR) {
-                buffer.position(offset(i));
-
-                // Inclui o inteiro que guarda o tamanho
-                // mais a quantidade de bytes por ele indicada
-                total = total + 4 + buffer.getInt();
-            } else {
-                total = total + tamanho[tipo];
-            }
-        }
-
-        return total;
+        return offset(membros);
     }
 }
