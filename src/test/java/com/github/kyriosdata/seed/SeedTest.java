@@ -3,6 +3,7 @@ package com.github.kyriosdata.seed;
 import org.junit.jupiter.api.Test;
 
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
@@ -187,22 +188,22 @@ public class SeedTest {
     }
 
     @Test
-    public void registroComUmVetorDeBytes() throws UnsupportedEncodingException {
-        byte[] meta = new byte[] { 0, 1, Seed.VETOR };
+    public void registroComUmVetorDeBytes() {
+        byte[] meta = new byte[] { 0, 2, Seed.BYTE, Seed.VETOR };
 
         Seed s = Seed.serializa(meta);
 
         String msg = "A vida é bela!";
-        byte[] dados = msg.getBytes("UTF-8");
+        byte[] dados = msg.getBytes(StandardCharsets.UTF_8);
 
-        s.defineByteArray(0, dados);
+        s.defineByteArray(1, dados);
 
         // Serialização produzida
         byte[] vetor = s.array();
 
         Seed r = Seed.desserializa(vetor);
 
-        assertEquals(msg, new String(r.obtemByteArray(0), "UTF-8"));
+        assertEquals(msg, new String(r.obtemByteArray(1), StandardCharsets.UTF_8));
     }
 
     @Test
@@ -223,7 +224,7 @@ public class SeedTest {
         Seed s = Seed.serializa(meta);
 
         byte[] d0 = new byte[] { 1, 2 };
-        boolean d1 = false;
+        boolean d1 = true;
         String d2 = "açaí";
         short d3 = 3;
         byte d4 = 4;
@@ -250,15 +251,15 @@ public class SeedTest {
         Seed r = Seed.desserializa(vetor);
 
         assertArrayEquals(d0, s.obtemByteArray(0));
-        assertEquals(d1, s.obtemBoolean(1));
-        assertEquals(d2, s.obtemString(2));
-        assertEquals(d3, s.obtemShort(3));
-        assertEquals(d4, s.obtemByte(4));
-        assertEquals(d5, s.obtemChar(5));
-        assertEquals(d6, s.obtemDouble(6), 0.0001d);
-        assertEquals(d7, s.obtemFloat(7), 0.0001d);
-        assertEquals(d8, s.obtemInt(8));
-        assertEquals(d9, s.obtemLong(9));
+        assertEquals(d1, r.obtemBoolean(1));
+        assertEquals(d2, r.obtemString(2));
+        assertEquals(d3, r.obtemShort(3));
+        assertEquals(d4, r.obtemByte(4));
+        assertEquals(d5, r.obtemChar(5));
+        assertEquals(d6, r.obtemDouble(6), 0.0001d);
+        assertEquals(d7, r.obtemFloat(7), 0.0001d);
+        assertEquals(d8, r.obtemInt(8));
+        assertEquals(d9, r.obtemLong(9));
     }
 }
 
