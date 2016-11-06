@@ -12,17 +12,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class SeedTest {
 
     @Test
-    public void tipoString() throws UnsupportedEncodingException {
-        byte[] m = new byte[0];
-        Seed s = Seed.serializa(m);
-
-        assertEquals("casa", s.unpackString(s.pack("casa"), 0));
-
-        String msg = "um longa mensagem, quer dizer, nem tanto!";
-        assertEquals(msg, s.unpackString(s.pack(msg), 0));
-    }
-
-    @Test
     public void registroComUmBoolean() {
         // Primeiro byte não usado
         // Segundo byte indica quantidade de campos do registro

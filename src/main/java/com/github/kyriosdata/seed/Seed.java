@@ -45,6 +45,13 @@ import java.nio.ByteBuffer;
  * vetores de bytes. Nesses casos, o tamanho de cada um deles só
  * pode ser definido quando o valor correspondente é estabelecido.
  *
+ * <p>O uso da classe para a serialização envolve a obtenção de
+ * uma instância para tal por meio do método {@link #serializa(byte[])}.
+ * A operação inversa exige o uso do método {@link #desserializa(byte[])}.
+ * No primeiro caso a metainformação é fornecida (vetor de bytes), no
+ * segundo, o vetor de bytes gerado pelo método {@link #array()} deve
+ * ser utilizado.
+ *
  */
 public class Seed {
 
@@ -182,21 +189,6 @@ public class Seed {
     }
 
     /**
-     * Posição inicial dos dados do registro, ou seja,
-     * posição do primeiro byte após metainformações.
-     *
-     * <p>O primeiro byte não é utilizado, o segundo
-     * indica a quantidade de campos do registro, ou seja,
-     * a posição inicial é dada pela quantidade de campos
-     * do registro mais 2.
-     *
-     * @return A posição do primeiro byte de dados do registro.
-     */
-    private int posicaoInicialDados() {
-        return buffer.get(POS_QTDE) + 2;
-    }
-
-    /**
      * Recupera o vetor de bytes empregado no processo de
      * serialização/desserialização.
      *
@@ -211,87 +203,6 @@ public class Seed {
         buffer.get(bytesUsados);
 
         return bytesUsados;
-    }
-
-    /**
-     * Empacota um {@code String} em vetor de bytes.
-     *
-     * @param valor Valor a ser empacotado.
-     *
-     * @return Vetor de bytes contendo o valor empacotado.
-     *
-     * @throws SeedException Caso não exista suporte para UTF-8.
-     */
-    public byte[] pack(String valor) {
-        byte[] bytes;
-
-        try {
-            bytes = valor.getBytes("UTF-8");
-        } catch (UnsupportedEncodingException exp) {
-            throw new SeedException("UTF-8 not supported");
-        }
-
-        return pack(bytes);
-    }
-
-    /**
-     * Empacota o vertor de bytes em outro vetor de bytes.
-     *
-     * @param bytes Vetor de bytes a ser empacotado.
-     * @return Vetor de bytes que empacota um vetor de bytes.
-     *
-     * @see #unpackByteArray(byte[], int)
-     */
-    private byte[] pack(byte[] bytes) {
-        int tamanho = bytes.length;
-
-        // Guarda tamanho (int) + os bytes da String propriamente dita
-        ByteBuffer buffer = ByteBuffer.allocate(4 + tamanho);
-        buffer.putInt(tamanho);
-        buffer.put(bytes);
-        return buffer.array();
-    }
-
-    /**
-     * Recupera {@code char} depositado no buffer na posição indicada.
-     *
-     * @param buffer Vetor do qual o {@code char} será recuperado.
-     * @param offset Posição inicial do valor a ser recuperado.
-     * @return Valor recuperado do buffer na posição indicada.
-     *
-     * @throws SeedException Caso não exista suporte para UTF-8.
-     */
-    public String unpackString(byte[] buffer, int offset) {
-        byte[] strBytes = unpackByteArray(buffer, offset);
-
-        try {
-            return new String(strBytes, "UTF-8");
-        } catch (UnsupportedEncodingException ex) {
-            throw new SeedException("UTF-8 not supported");
-        }
-    }
-
-    /**
-     * Recupera o vetor de bytes disponível no buffer a partir
-     * da posição indicada.
-     *
-     * @param buffer Buffer que contém o vetor de bytes.
-     *
-     * @param offset Posição inicial do vetor de bytes no buffer.
-     *
-     * @return Vetor de bytes.
-     *
-     * @see #pack(byte[])
-     */
-    private byte[] unpackByteArray(byte[] buffer, int offset) {
-        ByteBuffer wrapped = ByteBuffer.wrap(buffer);
-
-        int tamanho = wrapped.getInt(offset);
-        byte[] strBytes = new byte[tamanho];
-
-        wrapped.position(offset + 4);
-        wrapped.get(strBytes, 0, tamanho);
-        return strBytes;
     }
 
     public void defineBoolean(int ordem, boolean valor) {
@@ -577,5 +488,101 @@ public class Seed {
         int membros = buffer.get(1);
 
         return offset(membros);
+    }
+
+    /**
+     * Posição inicial dos dados do registro, ou seja,
+     * posição do primeiro byte após metainformações.
+     *
+     * <p>O primeiro byte não é utilizado, o segundo
+     * indica a quantidade de campos do registro, ou seja,
+     * a posição inicial é dada pela quantidade de campos
+     * do registro mais 2.
+     *
+     * @return A posição do primeiro byte de dados do registro.
+     */
+    private int posicaoInicialDados() {
+        return buffer.get(POS_QTDE) + 2;
+    }
+
+    /**
+     * Empacota um {@code String} em vetor de bytes.
+     *
+     * @param valor Valor a ser empacotado.
+     *
+     * @return Vetor de bytes contendo o valor empacotado.
+     *
+     * @throws SeedException Caso não exista suporte para UTF-8.
+     */
+    private byte[] pack(String valor) {
+        byte[] bytes;
+
+        try {
+            bytes = valor.getBytes("UTF-8");
+        } catch (UnsupportedEncodingException exp) {
+            throw new SeedException("UTF-8 not supported");
+        }
+
+        return pack(bytes);
+    }
+
+    /**
+     * Empacota o vertor de bytes em outro vetor de bytes.
+     *
+     * @param bytes Vetor de bytes a ser empacotado.
+     * @return Vetor de bytes que empacota um vetor de bytes.
+     *
+     * @see #unpackByteArray(byte[], int)
+     */
+    private byte[] pack(byte[] bytes) {
+        int tamanho = bytes.length;
+
+        // Guarda tamanho (int) + os bytes da String propriamente dita
+        ByteBuffer buffer = ByteBuffer.allocate(4 + tamanho);
+        buffer.putInt(tamanho);
+        buffer.put(bytes);
+        return buffer.array();
+    }
+
+    /**
+     * Recupera {@code char} depositado no buffer na posição indicada.
+     *
+     * @param buffer Vetor do qual o {@code char} será recuperado.
+     * @param offset Posição inicial do valor a ser recuperado.
+     * @return Valor recuperado do buffer na posição indicada.
+     *
+     * @throws SeedException Caso não exista suporte para UTF-8.
+     */
+    private String unpackString(byte[] buffer, int offset) {
+        byte[] strBytes = unpackByteArray(buffer, offset);
+
+        try {
+            return new String(strBytes, "UTF-8");
+        } catch (UnsupportedEncodingException ex) {
+            throw new SeedException("UTF-8 not supported");
+        }
+    }
+
+    /**
+     * Recupera o vetor de bytes disponível no buffer a partir
+     * da posição indicada.
+     *
+     * @param buffer Buffer que contém o vetor de bytes.
+     *
+     * @param offset Posição inicial do vetor de bytes no buffer.
+     *
+     * @return Vetor de bytes.
+     *
+     * @see #pack(byte[])
+     */
+    private byte[] unpackByteArray(byte[] buffer, int offset) {
+        ByteBuffer wrapped = ByteBuffer.wrap(buffer);
+
+        int tamanho = wrapped.getInt(offset);
+        byte[] strBytes = new byte[tamanho];
+
+        wrapped.position(offset + 4);
+        wrapped.get(strBytes, 0, tamanho);
+        return strBytes;
     }
 }
