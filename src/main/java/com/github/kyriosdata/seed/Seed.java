@@ -118,7 +118,7 @@ public class Seed {
     /**
      * Tamanhos empregados para armazenar cada um dos
      * tipos primitivos. Observe que o valor do tipo
-     * é o índice no vetor para o tamanho correspondente.
+     * é o índice no vetor do tamanho correspondente.
      */
     private final int[] tamanho = new int[]{1, 2, 4, 8, 4, 8, 1, 2, 0, 0};
 
@@ -177,6 +177,8 @@ public class Seed {
      * @param dados Vetor de bytes previamente serializado conforme
      *              a descrição dessa classe.
      * @return Instância que recupera valores do vetor de bytes.
+     *
+     * @see #serializa(byte[])
      */
     public static Seed desserializa(byte[] dados) {
         Seed s = new Seed();
