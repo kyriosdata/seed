@@ -211,6 +211,56 @@ public class Seed {
     }
 
     /**
+     * Recupera o valor correspondente ao tipo da metainformação.
+     *
+     * @param posicao Posição inicial da metainformação.
+     *
+     * @return Valor do tipo da metainformação.
+     *
+     * @see #getTamanho(int)
+     * @see #getAtributos(int)
+     */
+    public byte getTipo(int posicao) {
+        return buffer.get(posicao);
+    }
+
+    /**
+     * Recupera a quantidade de atributos da metainformação que
+     * se inicia na posição.
+     *
+     * @param posicao A posição de início da metainformação.
+     *
+     * @return Quantidade de atributos da metainformação.
+     *
+     * @see #getTipo(int)
+     * @see #getAtributos(int)
+     */
+    public byte getTamanho(int posicao) {
+        return buffer.get(posicao + 1);
+    }
+
+    /**
+     * Recupera vetor contendo os atributos da metainformação.
+     *
+     * @param posicao Posição inicial da metainformação.
+     *
+     * @return Vetor contendo um byte para cada atributo da
+     * metainformação, na ordem empregada para armazená-los.
+     *
+     * @see #getTipo(int)
+     * @see #getTamanho(int)
+     */
+    public byte[] getAtributos(int posicao) {
+        byte qtdAtributos = getTamanho(posicao);
+        byte[] atributos = new byte[qtdAtributos];
+
+        buffer.position(posicao + 2);
+        buffer.get(atributos, 0, qtdAtributos);
+
+        return atributos;
+    }
+
+    /**
      * Define o valor lógico para o campo indicado.
      * @param ordem A ordem do campo que recebe o valor.
      * @param valor O valor definido para o campo.
