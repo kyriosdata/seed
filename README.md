@@ -24,6 +24,6 @@ Acrescente a dependência no arquivo pom.xml:
 &lt;dependency&gt;
   &lt;groupId&gt;com.github.kyriosdata.seed&lt;/groupId&gt;
   &lt;artifactId&gt;seed&lt;/artifactId&gt;
-  &lt;version&gt;1.0.0&lt;/version&gt;
+  &lt;version&gt;1.0.1&lt;/version&gt;
 &lt;/dependency&gt;
 </pre>
