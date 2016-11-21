@@ -118,7 +118,7 @@ public class Seed {
     /**
      * Tamanhos empregados para armazenar cada um dos
      * tipos primitivos. Observe que o valor do tipo
-     * é o índice no vetor para o tamanho correspondente.
+     * é o índice no vetor do tamanho correspondente.
      */
     private final int[] tamanho = new int[]{1, 2, 4, 8, 4, 8, 1, 2, 0, 0};
 
@@ -177,6 +177,8 @@ public class Seed {
      * @param dados Vetor de bytes previamente serializado conforme
      *              a descrição dessa classe.
      * @return Instância que recupera valores do vetor de bytes.
+     *
+     * @see #serializa(byte[])
      */
     public static Seed desserializa(byte[] dados) {
         Seed s = new Seed();
@@ -206,6 +208,56 @@ public class Seed {
         buffer.get(bytesUsados);
 
         return bytesUsados;
+    }
+
+    /**
+     * Recupera o valor correspondente ao tipo da metainformação.
+     *
+     * @param posicao Posição inicial da metainformação.
+     *
+     * @return Valor do tipo da metainformação.
+     *
+     * @see #getTamanho(int)
+     * @see #getAtributos(int)
+     */
+    public byte getTipo(int posicao) {
+        return buffer.get(posicao);
+    }
+
+    /**
+     * Recupera a quantidade de atributos da metainformação que
+     * se inicia na posição.
+     *
+     * @param posicao A posição de início da metainformação.
+     *
+     * @return Quantidade de atributos da metainformação.
+     *
+     * @see #getTipo(int)
+     * @see #getAtributos(int)
+     */
+    public byte getTamanho(int posicao) {
+        return buffer.get(posicao + 1);
+    }
+
+    /**
+     * Recupera vetor contendo os atributos da metainformação.
+     *
+     * @param posicao Posição inicial da metainformação.
+     *
+     * @return Vetor contendo um byte para cada atributo da
+     * metainformação, na ordem empregada para armazená-los.
+     *
+     * @see #getTipo(int)
+     * @see #getTamanho(int)
+     */
+    public byte[] getAtributos(int posicao) {
+        byte qtdAtributos = getTamanho(posicao);
+        byte[] atributos = new byte[qtdAtributos];
+
+        buffer.position(posicao + 2);
+        buffer.get(atributos, 0, qtdAtributos);
+
+        return atributos;
     }
 
     /**

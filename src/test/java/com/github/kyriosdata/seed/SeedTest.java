@@ -13,6 +13,39 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class SeedTest {
 
     @Test
+    public void metaInformacao() {
+        // Primeira metainformação (posição 0)
+        // (0) tipo: 2
+        // (0) size: 3
+        // (0) atrs: 4, 5, 6
+
+        // Segunda metainformação (posição 5)
+        // (5) tipo: 2
+        // (5) size: 3
+        // (5) atrs: 4, 5, 6
+        byte[] meta = new byte[] {
+                2, 3, 4, 5, 6,
+                1, 2, 3, 4
+            };
+
+        Seed s = Seed.serializa(meta);
+        byte[] bytes = s.array();
+
+        Seed r = Seed.desserializa(bytes);
+
+        // Primeira metainformação (posição 0)
+        assertEquals(2, r.getTipo(0));
+        assertEquals(3, r.getTamanho(0));
+        assertArrayEquals(new byte[] { 4, 5, 6}, r.getAtributos(0));
+
+        // Segunda metainformação (posição 5)
+        assertEquals(1, r.getTipo(5));
+        assertEquals(2, r.getTamanho(5));
+        assertArrayEquals(new byte[] { 3, 4 }, r.getAtributos(5));
+
+    }
+
+    @Test
     public void registroComUmBoolean() {
         // Primeiro byte não usado
         // Segundo byte indica quantidade de campos do registro
