@@ -476,6 +476,25 @@ public class Seed {
     }
 
     /**
+     * Sequências de caracteres e vetores são armazenados como
+     * sequências de bytes. A sequência é precidida da quantidade
+     * de bytes utilizadas. O presente método permite recuperar,
+     * para um tipo {@link #STRING} ou {@link #VETOR}, a quantidade
+     * de bytes correspondente.
+     *
+     * @param ordem Ordem do campo do tipo {@link #STRING} ou
+     *              {@link #VETOR}.
+     *
+     * @return Tamanho em bytes do vetor de bytes empregado para
+     * armazenar a sequência de caracteres ou o vetor de bytes.
+     * Não inclui o armazenamento do próprio tamanho.
+     */
+    public int obtemTamanho(int ordem) {
+        int delta = offset(ordem);
+        return buffer.getInt(delta);
+    }
+
+    /**
      * Define o valor {@code String} para a ordem indicada
      * no registro.
      *
@@ -599,11 +618,7 @@ public class Seed {
      * @return Vetor de bytes contendo o valor empacotado.
      */
     private byte[] pack(String valor) {
-        byte[] bytes;
-
-        bytes = valor.getBytes(StandardCharsets.UTF_8);
-
-        return pack(bytes);
+        return pack(valor.getBytes(StandardCharsets.UTF_8));
     }
 
     /**

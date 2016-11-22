@@ -217,6 +217,7 @@ public class SeedTest {
 
         Seed r = Seed.desserializa(vetor);
 
+        assertEquals(msg.getBytes(StandardCharsets.UTF_8).length, r.obtemTamanho(0));
         assertEquals(msg, r.obtemString(0));
     }
 
