@@ -101,6 +101,9 @@ public class Seed {
 
     /**
      * Tipo do valor armazenado é um vetor de {@code byte}.
+     * Esse tipo é empregado com propósito geral, por exemplo,
+     * manter uma imagem ou mesmo a serialização de outro
+     * objeto.
      */
     public final static byte VETOR = 9;
 
@@ -207,13 +210,25 @@ public class Seed {
     }
 
     /**
-     * Define posição inicial do registro no vetor.
+     * Define posição inicial do registro corrente.
      *
      * @param inicio Posição inicial na qual se inicia
      *               registro no vetor de bytes.
+     *
+     * @see #getOffsetInicio()
      */
     public void setOffsetInicio(int inicio) {
         offsetInicio = inicio;
+    }
+
+    /**
+     * Recupera posição inicial do registro corrente.
+     * @return A posição do byte inicial do registro corrente no vetor.
+     *
+     * @see #setOffsetInicio(int)
+     */
+    public int getOffsetInicio() {
+        return offsetInicio;
     }
 
     /**
@@ -557,7 +572,7 @@ public class Seed {
      * do registro.
      */
     private int tamanhoRegistro() {
-        int membros = buffer.get(1);
+        int membros = buffer.get(offsetInicio + 1);
 
         return offset(membros);
     }
