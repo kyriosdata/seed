@@ -165,7 +165,7 @@ public class Seed {
         s.buffer.put(meta);
 
         // A posição inicial
-        s.offsetInicio = s.posicaoInicialDados();
+        s.setOffsetInicio(0);
 
         return s;
     }
@@ -181,16 +181,39 @@ public class Seed {
      * @see #serializa(byte[])
      */
     public static Seed desserializa(byte[] dados) {
+        return desserializa(dados, 0);
+    }
+
+    /**
+     * Cria uma instância a ser utilizada para recuperar valores
+     * do vetor de bytes previamente serializado.
+     *
+     * @param dados Vetor de bytes previamente serializado conforme
+     *              a descrição dessa classe.
+     * @param inicio Posição inicial do registro no vetor.
+     * @return Instância que recupera valores do vetor de bytes.
+     *
+     * @see #serializa(byte[])
+     */
+    public static Seed desserializa(byte[] dados, int inicio) {
         Seed s = new Seed();
 
         // Buffer do qual dados serão recuperados
         s.buffer = ByteBuffer.wrap(dados);
 
-        // Primeiro byte indica apenas quantidade de membros
-        // que segue essa quantidade, armazenada em um byte.
-        s.offsetInicio = s.posicaoInicialDados();
+        s.setOffsetInicio(inicio);
 
         return s;
+    }
+
+    /**
+     * Define posição inicial do registro no vetor.
+     *
+     * @param inicio Posição inicial na qual se inicia
+     *               registro no vetor de bytes.
+     */
+    public void setOffsetInicio(int inicio) {
+        offsetInicio = inicio;
     }
 
     /**
@@ -504,9 +527,9 @@ public class Seed {
      * inicia o membro de ordem indicada.
      */
     private int offset(int ordem) {
-        int delta = offsetInicio;
+        int delta = posicaoInicialDados();
         for (int i = 0; i < ordem; i++) {
-            byte tipo = buffer.get(i + 2);
+            byte tipo = buffer.get(offsetInicio + i + 2);
             if (tipo == STRING || tipo == VETOR) {
                 buffer.position(offset(i));
 
@@ -551,7 +574,7 @@ public class Seed {
      * @return A posição do primeiro byte de dados do registro.
      */
     private int posicaoInicialDados() {
-        return buffer.get(POS_QTDE) + 2;
+        return buffer.get(offsetInicio + POS_QTDE) + 2 + offsetInicio;
     }
 
     /**

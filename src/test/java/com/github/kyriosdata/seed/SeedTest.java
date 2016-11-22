@@ -28,8 +28,7 @@ public class SeedTest {
                 1, 2, 3, 4
             };
 
-        Seed s = Seed.serializa(meta);
-        byte[] bytes = s.array();
+        byte[] bytes = Seed.serializa(meta).array();
 
         Seed r = Seed.desserializa(bytes);
 
@@ -60,6 +59,7 @@ public class SeedTest {
 
         // Reconstrução
         Seed r = Seed.desserializa(dados);
+
         assertTrue(r.obtemBoolean(0));
     }
 
@@ -281,9 +281,18 @@ public class SeedTest {
         // Registro serializado
         byte[] vetor = s.array();
 
-        Seed r = Seed.desserializa(vetor);
+        // Coloca registro serializado como campo em outro
+        byte[] metaOuter = new byte[] { 0, 1, Seed.VETOR};
+        Seed outer = Seed.serializa(metaOuter);
+        outer.defineByteArray(0, vetor);
+        byte[] outerBytes = outer.array();
 
-        assertArrayEquals(d0, s.obtemByteArray(0));
+        Seed r = Seed.desserializa(outerBytes);
+
+        // Inicio do registro é após meta e tamanho em bytes.
+        r.setOffsetInicio(3 + 4);
+
+        assertArrayEquals(d0, r.obtemByteArray(0));
         assertEquals(d1, r.obtemBoolean(1));
         assertEquals(d2, r.obtemString(2));
         assertEquals(d3, r.obtemShort(3));
