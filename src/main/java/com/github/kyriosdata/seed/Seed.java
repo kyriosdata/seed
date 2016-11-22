@@ -560,7 +560,7 @@ public class Seed {
      * @return Quantidade de bytes, a partir da qual se
      * inicia o membro de ordem indicada.
      */
-    private int offset(int ordem) {
+    public int offset(int ordem) {
         int delta = posicaoInicialDados();
         for (int i = 0; i < ordem; i++) {
             byte tipo = buffer.get(offsetInicio + i + 2);
